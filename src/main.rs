@@ -1,13 +1,16 @@
-use std::str::FromStr;
-use yew::prelude::*;
 use web_sys::HtmlInputElement;
+use yew::prelude::*;
+
+#[derive(Default, Clone)]
 struct Gcd {
-    ans: usize,
-    intex: String,
+    n: Option<usize>,
+    m: Option<usize>,
+    ans: Option<usize>,
 }
 
 enum Message {
-    Inputted(String),
+    Inputted1(String),
+    Inputted2(String),
     Run,
 }
 
@@ -16,39 +19,33 @@ impl Component for Gcd {
     type Properties = ();
 
     fn create(_ctx: &Context<Self>) -> Self {
-        Self {
-            intex: "1x1".to_string(),
-            ans: 0,
-        }
+        Self::default()
     }
 
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
-            Message::Inputted(n)=>{
-                self.intex=match n.trim().parse(){
-                    Ok(ok)=>ok,
-                    Err(_)=>String::default(),
-                };
+            Message::Inputted1(n) => {
+                self.n = n.trim().parse().ok();
+                false
+            }
+            Message::Inputted2(n) => {
+                self.m = n.trim().parse().ok();
                 false
             }
             Message::Run => {
-                let intext = parse_pair(&self.intex, 'x').expect("parse error");
-                let mut n = intext.0;
-                let mut m = intext.1;
-                log::info!("intext.0 {}",intext.0);
-                log::info!("intext.1 {}",intext.1);
-                if n != 0 && m != 0 {
-                    while m != 0 {
-                        if m < n {
-                            std::mem::swap(&mut m, &mut n);
+                if let (Some(mut n), Some(mut m)) = (self.n, self.m) {
+                    self.ans = Some({
+                        if n != 0 && m != 0 {
+                            while m != 0 {
+                                if m < n {
+                                    std::mem::swap(&mut m, &mut n);
+                                }
+                                m %= n;
+                            }
                         }
-                        m %= n;
-                        log::info!("n:{}",n);
-                        log::info!("m:{}",m);
-                    }
+                        n
+                    })
                 }
-                self.ans = n;
-                log::info!("ans:{}",n);
                 true
             }
         }
@@ -58,29 +55,21 @@ impl Component for Gcd {
         html! {
             <div>
             <div>
-                <input type="text" oninput={ctx.link().callback(|e: InputEvent| Message::Inputted(e.target_unchecked_into::<HtmlInputElement>().value()))} />
+                <input type="text" oninput={ctx.link().callback(|e: InputEvent| Message::Inputted1(e.target_unchecked_into::<HtmlInputElement>().value()))} />
+                <input type="text" oninput={ctx.link().callback(|e: InputEvent| Message::Inputted2(e.target_unchecked_into::<HtmlInputElement>().value()))} />
                 <button onclick={ctx.link().callback(|_| Message::Run)}>{"Run"}</button>
             </div>
             <div>
-                {self.ans}
+                if let Some(ans) = self.ans {
+                    {ans}
+                }
             </div>
             <div>
             <h2>{"二つの数字のGCDを求めます．"}</h2>
             <h2>{"現状簡易版です．CSS等一切当てていません．今後(おそらくたぶんきっと)改善予定です．"}</h2>
-            <h3>{"N,Mを任意の正の整数とします．  `NxM`  二つの数字をxで区切って入力してください．"}</h3>
             </div>
             </div>
         }
-    }
-}
-
-fn parse_pair<T: FromStr>(s: &str, separator: char) -> Option<(T, T)> {
-    match s.find(separator) {
-        None => None,
-        Some(index) => match (T::from_str(&s[..index]), T::from_str(&s[index + 1..])) {
-            (Ok(l), Ok(r)) => Some((l, r)),
-            _ => None,
-        },
     }
 }
 
