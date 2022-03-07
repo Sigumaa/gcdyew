@@ -19,6 +19,7 @@ impl Component for Gcd {
     type Properties = ();
 
     fn create(_ctx: &Context<Self>) -> Self {
+        log::info!("Initialization in progress ....");
         Self::default()
     }
 
@@ -26,23 +27,31 @@ impl Component for Gcd {
         match msg {
             Message::Inputted1(n) => {
                 self.n = n.trim().parse().ok();
+                log::info!("Processing value n");
                 false
             }
             Message::Inputted2(n) => {
                 self.m = n.trim().parse().ok();
+                log::info!("Processing value m");
                 false
             }
             Message::Run => {
                 if let (Some(mut n), Some(mut m)) = (self.n, self.m) {
+                    log::info!("Calculations are starting ....");
                     self.ans = Some({
                         if n != 0 && m != 0 {
+                            log::info!(" n: {}, m: {}", n, m);
+                            let mut cnt = 1;
                             while m != 0 {
                                 if m < n {
                                     std::mem::swap(&mut m, &mut n);
                                 }
                                 m %= n;
+                                log::info!("{} calculation results. \n n: {}, m: {}", cnt, n, m);
+                                cnt += 1;
                             }
                         }
+                        log::info!("Calculations are done!");
                         n
                     })
                 }
@@ -61,7 +70,7 @@ impl Component for Gcd {
             </div>
             <div>
                 if let Some(ans) = self.ans {
-                    {ans}
+                    <b>{ans}</b>
                 }
             </div>
             <div>
