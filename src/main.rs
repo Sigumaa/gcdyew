@@ -1,7 +1,7 @@
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
 
-#[derive(Default, Clone)]
+#[derive(Default)]
 struct Gcd {
     n: Option<usize>,
     m: Option<usize>,
