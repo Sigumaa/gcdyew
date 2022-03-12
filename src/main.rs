@@ -36,24 +36,27 @@ impl Component for Gcd {
                 false
             }
             Message::Run => {
-                if let (Some(mut n), Some(mut m)) = (self.n, self.m) {
+                if let Self {
+                    n: Some(mut n),
+                    m: Some(mut m),
+                    ..
+                } = self
+                {
                     log::info!("Calculations are starting ....");
-                    self.ans = Some({
-                        if n != 0 && m != 0 {
-                            log::info!(" n: {}, m: {}", n, m);
-                            let mut cnt = 1;
-                            while m != 0 {
-                                if m < n {
-                                    std::mem::swap(&mut m, &mut n);
-                                }
-                                m %= n;
-                                log::info!("{} calculation results. \n n: {}, m: {}", cnt, n, m);
-                                cnt += 1;
+                    if n != 0 && m != 0 {
+                        log::info!(" n: {}, m: {}", n, m);
+                        let mut cnt = 1;
+                        while m != 0 {
+                            if m < n {
+                                std::mem::swap(&mut m, &mut n);
                             }
+                            m %= n;
+                            log::info!("{} calculation results. \n n: {}, m: {}", cnt, n, m);
+                            cnt += 1;
                         }
-                        log::info!("Calculations are done!");
-                        n
-                    })
+                    }
+                    log::info!("Calculations are done!");
+                    self.ans = Some(n);
                 }
                 true
             }
@@ -83,6 +86,6 @@ impl Component for Gcd {
 }
 
 fn main() {
-    yew::start_app::<Gcd>();
     wasm_logger::init(wasm_logger::Config::default());
+    yew::start_app::<Gcd>();
 }
