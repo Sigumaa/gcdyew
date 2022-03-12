@@ -1,3 +1,4 @@
+#![deny(clippy::all)]
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
 
