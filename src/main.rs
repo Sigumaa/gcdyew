@@ -73,8 +73,8 @@ impl Component for GcdCalc {
         html! {
             <div>
             <div>
-                <input type="text" oninput={ctx.link().callback(|e: InputEvent| Message::FieldVal1(e.target_unchecked_into::<HtmlInputElement>().value()))} />
-                <input type="text" oninput={ctx.link().callback(|e: InputEvent| Message::FieldVal2(e.target_unchecked_into::<HtmlInputElement>().value()))} />
+                <input type="number" oninput={ctx.link().callback(|e: InputEvent| Message::FieldVal1(e.target_unchecked_into::<HtmlInputElement>().value()))} />
+                <input type="number" oninput={ctx.link().callback(|e: InputEvent| Message::FieldVal2(e.target_unchecked_into::<HtmlInputElement>().value()))} />
                 <button onclick={ctx.link().callback(|_| Message::Run)}>{"Run"}</button>
             </div>
             <div>
