@@ -2,19 +2,19 @@ use web_sys::HtmlInputElement;
 use yew::prelude::*;
 
 #[derive(Default)]
-struct Gcd {
-    n: Option<usize>,
-    m: Option<usize>,
+struct GcdCalc {
+    val1: Option<usize>,
+    val2: Option<usize>,
     ans: Option<usize>,
 }
 
 enum Message {
-    Inputted1(String),
-    Inputted2(String),
+    FieldVal1(String),
+    FieldVal2(String),
     Run,
 }
 
-impl Component for Gcd {
+impl Component for GcdCalc {
     type Message = Message;
     type Properties = ();
 
@@ -25,38 +25,43 @@ impl Component for Gcd {
 
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
-            Message::Inputted1(n) => {
-                self.n = n.trim().parse().ok();
-                log::info!("Processing value n");
+            Message::FieldVal1(val1) => {
+                self.val1 = val1.trim().parse().ok();
+                log::info!("Processing value 1");
                 false
             }
-            Message::Inputted2(n) => {
-                self.m = n.trim().parse().ok();
-                log::info!("Processing value m");
+            Message::FieldVal2(val2) => {
+                self.val2 = val2.trim().parse().ok();
+                log::info!("Processing value 2");
                 false
             }
             Message::Run => {
                 if let Self {
-                    n: Some(mut n),
-                    m: Some(mut m),
+                    val1: Some(mut val1),
+                    val2: Some(mut val2),
                     ..
                 } = self
                 {
                     log::info!("Calculations are starting ....");
-                    if n != 0 && m != 0 {
-                        log::info!(" n: {}, m: {}", n, m);
+                    if val1 != 0 && val2 != 0 {
+                        log::info!(" val1: {}, val2: {}", val1, val2);
                         let mut cnt = 1;
-                        while m != 0 {
-                            if m < n {
-                                std::mem::swap(&mut m, &mut n);
+                        while val2 != 0 {
+                            if val2 < val1 {
+                                std::mem::swap(&mut val2, &mut val1);
                             }
-                            m %= n;
-                            log::info!("{} calculation results. \n n: {}, m: {}", cnt, n, m);
+                            val2 %= val1;
+                            log::info!(
+                                "{} calculation results. \n val1: {}, val2: {}",
+                                cnt,
+                                val1,
+                                val2
+                            );
                             cnt += 1;
                         }
                     }
                     log::info!("Calculations are done!");
-                    self.ans = Some(n);
+                    self.ans = Some(val1);
                 }
                 true
             }
@@ -67,8 +72,8 @@ impl Component for Gcd {
         html! {
             <div>
             <div>
-                <input type="text" oninput={ctx.link().callback(|e: InputEvent| Message::Inputted1(e.target_unchecked_into::<HtmlInputElement>().value()))} />
-                <input type="text" oninput={ctx.link().callback(|e: InputEvent| Message::Inputted2(e.target_unchecked_into::<HtmlInputElement>().value()))} />
+                <input type="text" oninput={ctx.link().callback(|e: InputEvent| Message::FieldVal1(e.target_unchecked_into::<HtmlInputElement>().value()))} />
+                <input type="text" oninput={ctx.link().callback(|e: InputEvent| Message::FieldVal2(e.target_unchecked_into::<HtmlInputElement>().value()))} />
                 <button onclick={ctx.link().callback(|_| Message::Run)}>{"Run"}</button>
             </div>
             <div>
@@ -87,5 +92,5 @@ impl Component for Gcd {
 
 fn main() {
     wasm_logger::init(wasm_logger::Config::default());
-    yew::start_app::<Gcd>();
+    yew::start_app::<GcdCalc>();
 }
