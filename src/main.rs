@@ -84,7 +84,6 @@ impl Component for GcdCalc {
             </div>
             <div>
             <h2>{"二つの数字のGCDを求めます．"}</h2>
-            <h2>{"現状簡易版です．CSS等一切当てていません．今後(おそらくたぶんきっと)改善予定です．"}</h2>
             </div>
             </div>
         }
